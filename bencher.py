@@ -1,12 +1,12 @@
 '''
 bencher.py : Python 2
 Author : Abhishek Munagekar
-A script to quickly generate comparison between image qualities
 
 Comparisons
 vmaf
 psnr
 ssim
+ms_ssim
 phone_model
 
 Dependencies
@@ -18,9 +18,9 @@ Input Folder : Folder Containing the files given as input to the network
 Output Folder : Fodler Contina the files given as output by the network
 Reference Folder : Folder Containing the files to be used as reference
 '''
-import subprocess
 import argparse
 import os
+import core
 from multiprocessing import Pool
 from numpy import median, mean
 
@@ -28,19 +28,14 @@ from numpy import median, mean
 # Helper Functions
 def build_parser():
     parser = argparse.ArgumentParser(description='Fast Folder Benchmarking')
-    parser.add_argument('-i', type=str,
-                        help='Folder Containing Input Files')
+    parser.add_argument('-if', type=str, nargs='+',
+                        help='Folders Containing Input Files')
     parser.add_argument('-r', type=str,
                         help='Folder Containing the Reference Files')
-    parser.add_argument('-o', type=str,
-                        help='Folder Containing the output Files')
-    parser.add_argument('-itype', type=str,
+    parser.add_argument('-itype', type=str, nargs='+',
                         help='Type of Images in Infolder')
-    parser.add_argument('-otype', type=str,
-                        help='Type of Image in Outfolder')
     parser.add_argument('--statfile', type=str, default="benchmark.txt",
                         help='Name/Location for Benchmark file')
-
     return parser
 
 
@@ -64,32 +59,10 @@ def statcomparehelper(i_ref):
 # Does comparison for ssim , psnr, vmaf, vmaf - phone, ms_ssim
 def statcompare(i, ref):
     params = {'ifile': i, 'rfile': ref}
-    # VMaf - Phone
-    command = 'ffmpeg -loglevel panic -i ' + i + ' -i ' + ref + \
-        ' -lavfi libvmaf="phone_model=1" -f null - | grep "VMAF score"'
-    result = subprocess.check_output(command, shell=True)
-    params['vmafp'] = result.strip().split(' ')[-1]
-
-    # VMaf
-    command = 'ffmpeg -loglevel panic -i ' + i + ' -i ' + ref + \
-        ' -lavfi libvmaf -f null - | grep VMAF '
-    result = subprocess.check_output(command, shell=True)
-    params['vmaf'] = result.strip().split(' ')[-1]
-
-    # PSNR
-    command = 'ffmpeg -loglevel info -i ' + i + ' -i ' + ref + \
-        ' -filter_complex "psnr" -f null - '
-    result = subprocess.check_output(
-        command, stderr=subprocess.STDOUT, shell=True)
-    params['psnr'] = result.split('\n')[-2].split(':')[-2].split(' ')[0]
-
-    # SSIM
-    command = 'ffmpeg -loglevel info -i ' + i + ' -i ' + ref + \
-        ' -filter_complex "ssim" -f null - '
-    result = subprocess.check_output(
-        command, stderr=subprocess.STDOUT, shell=True)
-    params['ssim'] = result.split('\n')[-2].split(' ')[-2].split(':')[1]
-
+    params['vmafp'] = core.vmafp(i, ref)
+    params['vmaf'] = core.vmaf(i, ref)
+    params['psnr'] = core.psnr(i, ref)
+    params['ssim'] = core.ssim(i, ref)
     return params
 
 
@@ -100,9 +73,6 @@ def cleanpnglist(ilist):
         if 'png' in item:
             cleanedlist.append(item)
     return cleanedlist
-
-
-#
 
 
 parser = build_parser()

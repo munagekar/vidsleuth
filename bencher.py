@@ -177,7 +177,7 @@ for i in range(len(COMPS)):
     fol1, fol2 = COMPS[i].split('vs')
     n1 = int(fol1)
     n2 = int(fol2)
-    print('Gains ' + INLABELS[n1] + 'vs' + INLABELS[n2] + '\n')
+    print('Gains ' + INLABELS[n1] + ' vs ' + INLABELS[n2] + '\n')
     diffstat = diff(istats[n1], istats[n2])
     metrics = ['psnr', 'ssim', 'vmaf', 'vmafp']
     for metric in metrics:

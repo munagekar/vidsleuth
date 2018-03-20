@@ -4,7 +4,6 @@ bencher.py : Python 2
 Author : Abhishek Munagekar
 
 
-
 Call Using
 python bencher.py -ifols 10 net10 20 net20 25 net25 35 net35 45 net45 -itypes cqi10 net10 cqi20 net20 cqi25 net25 cqi35 net35 cqi45 net45 -rfol label --comps 0vs1 2vs3 4vs5 6vs7 8vs9
 Comparisons
@@ -67,6 +66,7 @@ def diff(stat1, stat2):
     diffstat['vmaf'] = liststat(vmafdiff)
     diffstat['vmafp'] = liststat(vmafpdiff)
     diffstat['ssim'] = liststat(ssimdiff)
+    return diffstat
 
 
 # Helper Function for Pool Jobs
@@ -177,7 +177,7 @@ for i in range(len(COMPS)):
     fol1, fol2 = COMPS[i].split('vs')
     n1 = int(fol1)
     n2 = int(fol2)
-    print('Gains', INLABELS[n1], 'vs', INLABELS[n2], '\n')
+    print('Gains ' + INLABELS[n1] + 'vs' + INLABELS[n2] + '\n')
     diffstat = diff(istats[n1], istats[n2])
     metrics = ['psnr', 'ssim', 'vmaf', 'vmafp']
     for metric in metrics:

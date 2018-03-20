@@ -166,10 +166,10 @@ for item in range(len(reffiles)):
         fp.write(INLABELS[i] + ',')
         fp.write(istatfol[item]['ifile'] + ',')
         fp.write(istatfol[item]['rfile'] + ',')
-        fp.write(istatfol[item]['psnr'] + ',')
-        fp.write(istatfol[item]['ssim'] + ',')
-        fp.write(istatfol[item]['vmaf'] + ',')
-        fp.write(istatfol[item]['vmafp'])
+        fp.write(str(istatfol[item]['psnr']) + ',')
+        fp.write(str(istatfol[item]['ssim']) + ',')
+        fp.write(str(istatfol[item]['vmaf']) + ',')
+        fp.write(str(istatfol[item]['vmafp']))
         fp.write('\n')
 
 
@@ -181,4 +181,4 @@ for i in range(len(COMPS)):
     diffstat = diff(istats[n1], istats[n2])
     metrics = ['psnr', 'ssim', 'vmaf', 'vmafp']
     for metric in metrics:
-        print(metric, ':', magprint(diffstat[metrics]), '\n')
+        print(metric, ':', magprint(diffstat[metric]), '\n')

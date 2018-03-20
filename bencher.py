@@ -181,4 +181,4 @@ for i in range(len(COMPS)):
     diffstat = diff(istats[n1], istats[n2])
     metrics = ['psnr', 'ssim', 'vmaf', 'vmafp']
     for metric in metrics:
-        print(metric, ':', magprint(diffstat[metric]), '\n')
+        print(metric + ':' + diffstat[metric])
